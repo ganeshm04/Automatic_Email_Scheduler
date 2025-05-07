@@ -6,11 +6,7 @@ import sequenceRouter from "./routes/sequence.route.js";
 const app = express();
 
 app.use(cors({
-  origin: [
-    'https://automatic-email-scheduler.vercel.app',
-    'https://automatic-email-scheduler-rh87.vercel.app',
-    'http://localhost:5173'
-  ],
+  origin:process.env.ORIGIN,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']

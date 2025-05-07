@@ -1,5 +1,6 @@
 import asyncHandler from "../utils/asyncHandler.js";
-import { agenda } from "../utils/emailScheduler.js";
+import { agenda, scheduleEmails } from "../utils/emailScheduler.js";
+import Sequence from "../models/sequence.model.js";
 
 const startProcess = asyncHandler(async (req, res) => {
   try {
@@ -15,7 +16,8 @@ const startProcess = asyncHandler(async (req, res) => {
     const newSequence = new Sequence({ nodes, edges });
     await newSequence.save();
 
-    await agenda.scheduleEmails();
+    // Call scheduleEmails directly since it's imported
+    await scheduleEmails();
 
     res.status(200).json({
       success: true,

@@ -64,3 +64,132 @@ npm run dev
 ### Open the application
 
 Open your browser and navigate to http://localhost:5173 to view the application.
+
+## API Documentation
+
+### Base URL
+
+```
+Development: http://localhost:3000
+Production: https://automatic-email-scheduler-rh87.vercel.app
+```
+
+### Endpoints
+
+#### Start Email Sequence Process
+
+Initiates an email sequence based on the provided flowchart configuration.
+
+- **URL**: `/api/sequence/start-process`
+- **Method**: `POST`
+- **Content-Type**: `application/json`
+
+##### Request Body
+
+```json
+{
+  "nodes": [
+    {
+      "id": "1",
+      "data": {
+        "label": "Lead-Source\n- (example@email.com)"
+      },
+      "position": {
+        "x": 100,
+        "y": 100
+      }
+    },
+    {
+      "id": "2",
+      "data": {
+        "label": "Cold-Email\n- (Subject) Email content"
+      },
+      "position": {
+        "x": 100,
+        "y": 200
+      }
+    },
+    {
+      "id": "3",
+      "data": {
+        "label": "Wait/Delay\n- (2 min)"
+      },
+      "position": {
+        "x": 100,
+        "y": 300
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "1-2",
+      "source": "1",
+      "target": "2"
+    },
+    {
+      "id": "2-3",
+      "source": "2",
+      "target": "3"
+    }
+  ]
+}
+```
+
+##### Response
+
+###### Success Response (200 OK)
+```json
+{
+  "success": true,
+  "message": "Process started successfully"
+}
+```
+
+###### Error Response (400 Bad Request)
+```json
+{
+  "success": false,
+  "message": "Nodes and edges are required"
+}
+```
+
+###### Error Response (500 Internal Server Error)
+```json
+{
+  "success": false,
+  "message": "Internal server error",
+  "error": "Error message details"
+}
+```
+
+##### Example Usage (JavaScript/Axios)
+```javascript
+const response = await axios.post(
+  `${API_URL}/api/sequence/start-process`,
+  {
+    nodes: [...],
+    edges: [...]
+  },
+  {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+);
+```
+
+
+
+###### Success Response (200 OK)
+```json
+{
+  "status": "ok"
+}
+```
+
+## Notes
+
+- The API follows RESTful conventions
+- All timestamps are in ISO 8601 format
+- Rate limiting may apply in production
+- CORS is enabled for specified origins only

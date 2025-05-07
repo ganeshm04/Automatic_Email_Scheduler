@@ -1,17 +1,33 @@
-import Sequence from "../models/sequence.model.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { scheduleEmails } from "../utils/emailScheduler.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import { agenda } from "../utils/emailScheduler.js";
 
 const startProcess = asyncHandler(async (req, res) => {
-  const { nodes, edges } = req.body;
   try {
+    const { nodes, edges } = req.body;
+    
+    if (!nodes || !edges) {
+      return res.status(400).json({
+        success: false,
+        message: "Nodes and edges are required"
+      });
+    }
+
     const newSequence = new Sequence({ nodes, edges });
     await newSequence.save();
 
-    await scheduleEmails();
-    res.status(200).send("Sequence saved and emails scheduled");
+    await agenda.scheduleEmails();
+
+    res.status(200).json({
+      success: true,
+      message: "Process started successfully"
+    });
   } catch (error) {
-    res.status(500).send("Error saving sequence");
+    console.error("Error in startProcess:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message
+    });
   }
 });
 

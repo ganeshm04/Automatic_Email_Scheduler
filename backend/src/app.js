@@ -5,18 +5,33 @@ import sequenceRouter from "./routes/sequence.route.js";
 
 const app = express();
 
-app.use(cors({
-  origin:process.env.ORIGIN,
-  credentials: true,
+// CORS configuration
+const corsOptions = {
+  origin: ['https://automatic-email-scheduler.vercel.app', 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+// Apply CORS middleware before routes
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 
 app.set("trust proxy", 1);
 app.use(express.static("public"));
 app.use(express.json({ limit: "16kb" }));
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 
+// API routes
 app.use("/api/sequence", sequenceRouter);
+
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
 const __dirname = path.resolve();
 

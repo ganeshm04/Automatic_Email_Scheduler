@@ -198,16 +198,25 @@ const FlowChart = () => {
 
   // Handle the process start
   const handleStartProcess = async () => {
-    const response = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/api/sequence/start-process`,
-      {
-        nodes,
-        edges,
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/sequence/start-process`,
+        {
+          nodes,
+          edges,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true
+        }
+      );
+      if (response.status === 200) {
+        alert("Process started successfully");
       }
-    );
-    if (response.status === 200) {
-      alert("Process started successfully");
-    } else {
+    } catch (error) {
+      console.error("Error:", error);
       alert("Error starting process");
     }
   };
